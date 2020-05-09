@@ -7,7 +7,8 @@ from defs import *
 
 #mqtt server address
 broker_address="192.168.2.30"
-
+broker_username=""
+broker_password=""
 
 #example data telegram 
 #$GPRP,A06FAA4F74AF,CC4B7399BCB2,-87,02011A0C26FE88080101A26FAA4F74AE
@@ -78,8 +79,11 @@ def on_message(client, userdata, message):
 
 
 client = mqtt.Client("ble2mqttscript")
+if broker_username != "":
+    client.username_pw_set(broker_username, broker_password)
+    print("logging in")
 client.connect(broker_address)
-client.subscribe("tores/#")
+client.subscribe("ble2mqtt/sensors/#")
 client.publish("ble2mqtt/state", "online")
 client.on_message=on_message
 client.loop_forever()
