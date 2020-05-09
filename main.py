@@ -9,7 +9,7 @@ from defs import *
 broker_address="192.168.2.30"
 
 
-#eksempel data telegram 
+#example data telegram 
 #$GPRP,A06FAA4F74AF,CC4B7399BCB2,-87,02011A0C26FE88080101A26FAA4F74AE
 
 
@@ -45,7 +45,6 @@ def on_message(client, userdata, message):
         mac = data[1]
         signal = data[3]
         payload = data[4]
-        #temp = getTemp(payload) 
         senstype = payload[0:14]
         if senstype  == "02010612FF0D00":
             extra = payload[22:24]
@@ -55,7 +54,6 @@ def on_message(client, userdata, message):
                 button = "off"    
             batt = getBatt(payload)
             temp = getTemp(payload)
-            #batt = int(batt)
             batt = round((float(batt)/3.3)*100, 2)
             topic = "ignics/" + str(mac) + "/"
             
@@ -71,27 +69,15 @@ def on_message(client, userdata, message):
             client.publish("homeassistant/sensor/" + mac + "/battery/config", batt_cfg, retain=True)
             client.publish("homeassistant/sensor/" + mac + "/temperature/config", temp_cfg, retain=True)
             client.publish("homeassistant/sensor/" + mac + "/linkquality/config", link_cfg, retain=True)
-            #print(batt_cfg)
             client.publish("ble2mqtt/" + mac, tpmsg)
-            #client.publish(topic + "temperature/value", str(temp))
-            #client.publish(topic + "button/value", button)
-            #client.publish(topic + "signal/value", str(signal))
-            #client.publish(topic + "battery/value", str(batt))
-            #print("mac: " + mac + " signal: " + signal + " type: " + str(senstype) + " temp: " + str(temp) + " button: " + button + " payload: " + str(payload))    
                 
     except Exception as e:
         print("exception: ")
         print(e)
-    #print("message received " ,str(message.payload.decode("utf-8")))
-    #print("message topic=",message.topic)
-    #print("message qos=",message.qos)
-    #print("message retain flag=",message.retain)
 
 
 
-#print("creating new instance")
 client = mqtt.Client("ble2mqttscript")
-#print("connecting to broker")
 client.connect(broker_address)
 client.subscribe("tores/#")
 client.publish("ble2mqtt/state", "online")
