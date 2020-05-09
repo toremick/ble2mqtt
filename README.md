@@ -27,8 +27,7 @@ home assistant ignics trough mqtt
 ```broker_address="192.168.2.30"```      
 ```broker_username="your-username"```  
 ```broker_password="your-password"```  
-
-###make changes and save with "ctrl+x" then y and enter    
+### make changes and save with "ctrl+x" then y and enter    
 
 ### Set up your gateway as shown below (change your ip to match)
 
