@@ -38,4 +38,4 @@ home assistant ignics trough mqtt
 
 
 ### finally start the service  
-```sudo service ble2mqtt start``` 
+```sudo systemctl start ble2mqtt``` 
