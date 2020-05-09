@@ -21,11 +21,11 @@ home assistant ignics trough mqtt
 ### update rc.d
 ```update-rc.d ble2mqtt defaults```
 
-###change your mqtt server in main.py
-```nano main.py```
-###edit following line to reflect your mqtt server:  
-```broker_address="192.168.2.30"```  
-###make changes and save with "ctrl+x" then y and enter  
+###change your mqtt server in main.py   
+```nano main.py```   
+###edit following line to reflect your mqtt server:    
+```broker_address="192.168.2.30"```    
+###make changes and save with "ctrl+x" then y and enter    
 
 ### Set up your gateway as shown below (change your ip to match)
 
