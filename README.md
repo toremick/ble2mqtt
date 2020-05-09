@@ -29,9 +29,13 @@ home assistant ignics trough mqtt
 ```broker_password="your-password"```  
 ### make changes and save with "ctrl+x" then y and enter    
 
+
 ### Set up your gateway as shown below (change your ip to match)
 
 
 ![Gateway setup](/images/setup%20gateway.PNG)
 
 
+
+### finally start the service  
+```service ble2mqtt start``` 
