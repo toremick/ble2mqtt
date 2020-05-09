@@ -12,5 +12,6 @@ cp ble2mqtt /etc/init.d/
 update-rc.d ble2mqtt defaults
 
 
-![GitHub Logo](/images/logo.png)
-Format: ![Alt Text](url)
+![Gateway setup](/images/setup%20gateway.PNG)
+
+
