@@ -1,4 +1,4 @@
-# ha-ble
+# ble2mqtt
 home assistant ignics trough mqtt
 
 ### install pip  
