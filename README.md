@@ -10,8 +10,8 @@ home assistant ignics trough mqtt
 
 
 ### install ble2mqtt in /opt
-```cd /opt```
-```sudo git clone https://github.com/toremick/ble2mqtt.git```
+```cd /opt```  
+```sudo git clone https://github.com/toremick/ble2mqtt.git```  
 
 
 
