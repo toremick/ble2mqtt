@@ -1,8 +1,10 @@
 ## ha-ble
 home assistant ignics trough mqtt
 
-#install pip  
-apt install python3-pip  
+# install pip  
+```apt install python3-pip```
+
+
 #install paho-mqtt for python  
 pip3 install paho-mqtt  
 
