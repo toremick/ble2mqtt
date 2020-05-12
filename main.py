@@ -61,11 +61,11 @@ def on_message(client, userdata, message):
             batt_cfg = battery_cfg.replace('MACADDRESS', str(mac))
             temp_cfg = temperature_cfg.replace('MACADDRESS', str(mac))
             link_cfg = signal_cfg.replace('MACADDRESS', str(mac))
+            clicker_cfg = click_cfg.replace('MACADDRESS', str(mac))
             
             tpmsg = topicmsg.replace('BATT', str(batt))
             tpmsg = tpmsg.replace('TEMP', str(temp))
             tpmsg = tpmsg.replace('LINK', str(signal))
-            
             
             client.publish("homeassistant/sensor/" + mac + "/battery/config", batt_cfg, retain=True)
             client.publish("homeassistant/sensor/" + mac + "/temperature/config", temp_cfg, retain=True)
@@ -77,13 +77,34 @@ def on_message(client, userdata, message):
         print(e)
 
 
+def connectmqtt():
+    client = mqtt.Client("ble2mqttscript")	
+    if broker_username != "":
+        client.username_pw_set(broker_username, broker_password)
+        print("logging in")
+    client.connect(broker_address)
+    client.subscribe("ble2mqtt/sensors/#")
+    client.publish("ble2mqtt/state", "online")
+    client.on_message=on_message
+    client.loop_forever()
 
-client = mqtt.Client("ble2mqttscript")
-if broker_username != "":
-    client.username_pw_set(broker_username, broker_password)
-    print("logging in")
-client.connect(broker_address)
-client.subscribe("ble2mqtt/sensors/#")
-client.publish("ble2mqtt/state", "online")
-client.on_message=on_message
-client.loop_forever()
+
+def startmqtt():
+    try:
+        connectmqtt()
+        print("Starting mqtt")
+        time.sleep(5)
+    except Exception as e:
+        print("retrying..")
+        time.sleep(5)
+        print(e)
+
+
+
+while True:
+
+    try:
+        startmqtt()
+    except Exception as e:
+        
+        time.sleep(2)
