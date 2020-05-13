@@ -17,7 +17,7 @@ home assistant ignics trough mqtt
 
 ### copy ble2mqtt to /etc/init.d/
 ```cd /opt/ble2mqtt```  
-```sudo cp ble2mqtt /etc/init.d/```  
+```sudo cp examples/ble2mqtt /etc/init.d/```  
 
 ### update rc.d  
 ```sudo update-rc.d ble2mqtt defaults```   
