@@ -4,11 +4,7 @@ import paho.mqtt.client as mqtt
 import time
 import struct
 from defs import *
-
-#mqtt server address
-broker_address="192.168.2.30"
-broker_username=""
-broker_password=""
+from config import *
 
 #example data telegram 
 #$GPRP,A06FAA4F74AF,CC4B7399BCB2,-87,02011A0C26FE88080101A26FAA4F74AE
