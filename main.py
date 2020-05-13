@@ -6,8 +6,6 @@ import struct
 from defs import *
 from config import *
 
-
-
 #example data telegram 
 #$GPRP,A06FAA4F74AF,CC4B7399BCB2,-87,02011A0C26FE88080101A26FAA4F74AE
 
