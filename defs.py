@@ -48,3 +48,18 @@ topicmsg = """
 {"battery":BATT,
 "linkquality":LINK,
 "temperature":TEMP}"""
+
+
+click_cfg = """
+{"icon":"mdi:toggle-switch",
+"value_template":"{{ value_json.click }}",
+"state_topic":"ble2mqtt/MACADDRESS",
+"json_attributes_topic":"ble2mqtt/MACADDRESS",
+"name":"MACADDRESS_click",
+"unique_id":"MACADDRESS_click_ble2mqtt",
+"device":{"identifiers":["ble2mqtt_MACADDRESS"],
+"name":"MACADDRESS",
+"sw_version":"ble2mqtt 1.0",
+"model":"iBS03T",
+"manufacturer":"IGNICS"},
+"availability_topic":"ble2mqtt/state"}"""
