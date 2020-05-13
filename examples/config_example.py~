@@ -1,5 +1,0 @@
-
-#mqtt config
-broker_address="192.168.2.30"
-broker_username=""
-broker_password=""
