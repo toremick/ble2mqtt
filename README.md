@@ -1,8 +1,8 @@
 # ble2mqtt
 home assistant ignics trough mqtt
 
-### install pip  
-```sudo apt install python3-pip```
+### install pip and git  
+```sudo apt install python3-pip git```
 
 
 ### install paho-mqtt for python  
@@ -18,15 +18,21 @@ home assistant ignics trough mqtt
 ### copy ble2mqtt to /etc/init.d/
 ```cd /opt/ble2mqtt```  
 ```sudo cp ble2mqtt /etc/init.d/```  
+
 ### update rc.d  
 ```sudo update-rc.d ble2mqtt defaults```   
 
-### change your mqtt server in main.py   
-```sudo nano main.py```   
-### edit following line to reflect your mqtt server:    
+### create config file from example   
+```sudo cp examples/config_example.py config.py```   
+
+### open in editor
+```sudo nano config.py``` 
+
+### edit following line to reflect your mqtt server:      
 ```broker_address="192.168.2.30"```      
-```broker_username="your-username"```  
-```broker_password="your-password"```  
+```broker_username="my-mqtt-username"```  
+```broker_password="my-mqtt-password"```  
+
 ### make changes and save with "ctrl+x" then y and enter    
 
 
