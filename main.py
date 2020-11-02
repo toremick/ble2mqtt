@@ -97,6 +97,10 @@ def on_message(client, userdata, message):
         senstype = payload[0:14]
         tore = 1
         humid = 0
+        model = ""
+        manu =""
+        batt = 0
+        temp = 0
         if senstype  == "02010612FF0D00":
             extra = payload[22:24]
             if extra == '01':
@@ -126,7 +130,6 @@ def on_message(client, userdata, message):
 
 
 
-        topic = "ignics/" + str(mac) + "/"
         batt_cfg = battery_cfg.replace('MACADDRESS', str(mac))
         batt_cfg = batt_cfg.replace('MODELNAME', str(model))
         batt_cfg = batt_cfg.replace('MANUFACTURENAME', str(manu))
