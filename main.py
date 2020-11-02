@@ -11,7 +11,7 @@ from config import *
 
 import os.path
 
-statefile= './sensors.state'
+statefile= '/opt/ble2mqtt/sensors.state'
 
 file_exists = os.path.isfile(statefile) 
  
