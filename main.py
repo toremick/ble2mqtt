@@ -9,6 +9,19 @@ from config import *
 #example data telegram 
 #$GPRP,A06FAA4F74AF,CC4B7399BCB2,-87,02011A0C26FE88080101A26FAA4F74AE
 
+import os.path
+
+statefile= './sensors.state'
+
+file_exists = os.path.isfile(statefile) 
+ 
+if file_exists != True:
+    with open(statefile, 'w+') as file:
+        file.write("#known sensors\n");
+
+    
+   
+    
 
 
 def getTemp(msg):
@@ -79,7 +92,7 @@ def ruuviBatt(msg):
     return temp
 
 def check_if_string_in_file(string_to_search):
-    with open("/opt/ble2mqtt/sensors.state", 'r+') as read_obj:
+    with open(statefile, 'r+') as read_obj:
         for line in read_obj:
             if string_to_search in line:
                 return False
@@ -95,7 +108,7 @@ def on_message(client, userdata, message):
         signal = data[3]
         payload = data[4]
         senstype = payload[0:14]
-        tore = 1
+        accepted_sensor = 0
         humid = 0
         model = ""
         manu =""
@@ -111,6 +124,7 @@ def on_message(client, userdata, message):
             temp = getTemp(payload)
             model = "iBS03T"
             manu = "INGICS"
+            accepted_sensor = 1
 
 
         elif senstype == "02010611FF9904":
@@ -119,6 +133,7 @@ def on_message(client, userdata, message):
             batt = ruuviBatt(payload)
             model = "ruuvitag"
             manu = "RUUVI"
+            accepted_sensor = 1
 
         elif senstype == "10161A18A4C138":
             temp = xiaomiTemp(payload)
@@ -126,47 +141,48 @@ def on_message(client, userdata, message):
             batt = xiaomiBatt(payload)
             model = "LYWSD003MMC"
             manu = "XIAOMI"
+            accepted_sensor = 1
 
 
 
-
-        batt_cfg = battery_cfg.replace('MACADDRESS', str(mac))
-        batt_cfg = batt_cfg.replace('MODELNAME', str(model))
-        batt_cfg = batt_cfg.replace('MANUFACTURENAME', str(manu))
+        if accepted_sensor == 1:    
+            batt_cfg = battery_cfg.replace('MACADDRESS', str(mac))
+            batt_cfg = batt_cfg.replace('MODELNAME', str(model))
+            batt_cfg = batt_cfg.replace('MANUFACTURENAME', str(manu))
            
-        temp_cfg = temperature_cfg.replace('MACADDRESS', str(mac))
-        temp_cfg = temp_cfg.replace('MODELNAME', str(model))
-        temp_cfg = temp_cfg.replace('MANUFACTURENAME', str(manu))
-        link_cfg = signal_cfg.replace('MACADDRESS', str(mac))
-        link_cfg = link_cfg.replace('MODELNAME', str(model))
-        link_cfg = link_cfg.replace('MANUFACTURENAME', str(manu))
-        clicker_cfg = click_cfg.replace('MACADDRESS', str(mac))
-        clicker_cfg = clicker_cfg.replace('MODELNAME', str(model))
-        clicker_cfg = clicker_cfg.replace('MANUFACTURENAME', str(manu))
+            temp_cfg = temperature_cfg.replace('MACADDRESS', str(mac))
+            temp_cfg = temp_cfg.replace('MODELNAME', str(model))
+            temp_cfg = temp_cfg.replace('MANUFACTURENAME', str(manu))
+            link_cfg = signal_cfg.replace('MACADDRESS', str(mac))
+            link_cfg = link_cfg.replace('MODELNAME', str(model))
+            link_cfg = link_cfg.replace('MANUFACTURENAME', str(manu))
+            clicker_cfg = click_cfg.replace('MACADDRESS', str(mac))
+            clicker_cfg = clicker_cfg.replace('MODELNAME', str(model))
+            clicker_cfg = clicker_cfg.replace('MANUFACTURENAME', str(manu))
                   
-        if humid > 1:            
-            hum_cfg = humidity_cfg.replace('MACADDRESS', str(mac))
-            hum_cfg = hum_cfg.replace('MODELNAME', str(model))
-            hum_cfg = hum_cfg.replace('MANUFACTURENAME', str(manu))
+            if humid > 1:            
+                hum_cfg = humidity_cfg.replace('MACADDRESS', str(mac))
+                hum_cfg = hum_cfg.replace('MODELNAME', str(model))
+                hum_cfg = hum_cfg.replace('MANUFACTURENAME', str(manu))
 
         
         
         
-            tpmsg = topicmsgwhumid.replace('HUMID', str(humid))
-            tpmsg = tpmsg.replace('BATT', str(batt))
-        else:
-            tpmsg = topicmsg.replace('BATT', str(batt))    
-        tpmsg = tpmsg.replace('TEMP', str(temp))
-        tpmsg = tpmsg.replace('LINK', str(signal))
+                tpmsg = topicmsgwhumid.replace('HUMID', str(humid))
+                tpmsg = tpmsg.replace('BATT', str(batt))
+            else:
+                tpmsg = topicmsg.replace('BATT', str(batt))    
+            tpmsg = tpmsg.replace('TEMP', str(temp))
+            tpmsg = tpmsg.replace('LINK', str(signal))
 
-        if check_if_string_in_file(mac):
-            client.publish("homeassistant/sensor/" + mac + "/battery/config", batt_cfg, retain=True)
-            client.publish("homeassistant/sensor/" + mac + "/temperature/config", temp_cfg, retain=True)
-            client.publish("homeassistant/sensor/" + mac + "/linkquality/config", link_cfg, retain=True)
-            if humid > 1:
-                client.publish("homeassistant/sensor/" + mac + "/humidity/config", hum_cfg, retain=True)
-        client.publish("ble2mqtt/" + mac, tpmsg)
-        client.publish("ble2mqtt/state", "online")
+            if check_if_string_in_file(mac):
+                client.publish("homeassistant/sensor/" + mac + "/battery/config", batt_cfg, retain=True)
+                client.publish("homeassistant/sensor/" + mac + "/temperature/config", temp_cfg, retain=True)
+                client.publish("homeassistant/sensor/" + mac + "/linkquality/config", link_cfg, retain=True)
+                if humid > 1:
+                    client.publish("homeassistant/sensor/" + mac + "/humidity/config", hum_cfg, retain=True)
+            client.publish("ble2mqtt/" + mac, tpmsg)
+            client.publish("ble2mqtt/state", "online")
                 
     except Exception as e:
         print("on message exception: ")
