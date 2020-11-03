@@ -1,5 +1,5 @@
 # ble2mqtt
-home assistant ignics trough mqtt
+home assistant ingics, ruuvitag and xiaomi ( LYWSD03MMC custom firmware)   trough mqtt
 
 ### install pip and git  
 ```sudo apt install python3-pip git```
@@ -36,7 +36,7 @@ home assistant ignics trough mqtt
 ### make changes and save with "ctrl+x" then y and enter    
 
 
-### Set up your gateway as shown below (change your ip to match)
+### Set up your gateway as shown below (change your ip to match, and set request interval to 60)
 
 
 ![Gateway setup](/images/setup%20gateway.PNG)
