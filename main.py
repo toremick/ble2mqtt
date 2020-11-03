@@ -5,35 +5,23 @@ import time
 import struct
 from defs import *
 from config import *
-
-#example data telegram 
-#$GPRP,A06FAA4F74AF,CC4B7399BCB2,-87,02011A0C26FE88080101A26FAA4F74AE
-
 import os.path
 
 statefile= '/opt/ble2mqtt/sensors.state'
 
 file_exists = os.path.isfile(statefile) 
- 
 if file_exists != True:
     with open(statefile, 'w+') as file:
         file.write("#known sensors\n");
 
-    
-   
-    
-
-
-def getTemp(msg):
+def ingicsTemp(msg):
     val_one = int(msg[24:26], 16)
     val_two = int(msg[26:28], 16)
-
     vals = (val_one, val_two)
     btarray = bytearray(vals)
     integer = struct.unpack('h'*(len(btarray)//2), btarray)
     temp = integer[0]/100.0
     return temp
-
 
 def ruuviTemp(msg):
     val_one = int(msg[18:20], 16)
@@ -41,21 +29,14 @@ def ruuviTemp(msg):
     temp = round(val_one + (dec/100),2)
     return temp
 
-
 def xiaomiTemp(msg):
     val_one = int(msg[20:24], 16)
     temp = val_one/10.0
     return temp
 
-
 def xiaomiHum(msg):
     humi = int(msg[24:26], 16)
     return humi
-
-def xiaomiBatt(msg):
-    humi = int(msg[26:28], 16)
-    return humi
-
 
 def ruuviHum(msg):
     humi = int(msg[16:18], 16)
@@ -70,19 +51,19 @@ def ruuviPress(msg):
     temp = (integer[0]/10)
     return temp
 
-def getBatt(msg):
+def ingicsBatt(msg):
     val_one = int(msg[18:20], 16)
     val_two = int(msg[20:22], 16)
-
     vals = (val_one, val_two)
     btarray = bytearray(vals)
     integer = struct.unpack('h'*(len(btarray)//2), btarray)
     battval = integer[0]/100
     temp = int((battval/3.3)*100)
-    
     return temp
 
-
+def xiaomiBatt(msg):
+    humi = int(msg[26:28], 16)
+    return humi
 
 def ruuviBatt(msg):
     battval =  int(msg[38:42], 16)
@@ -99,7 +80,6 @@ def check_if_string_in_file(string_to_search):
         read_obj.write(string_to_search + "\n")
     return True
 
-    
 def on_message(client, userdata, message):
     try:
         data = str(message.payload.decode("utf-8"))
@@ -114,19 +94,20 @@ def on_message(client, userdata, message):
         manu =""
         batt = 0
         temp = 0
+        #type is ingics
         if senstype  == "02010612FF0D00":
             extra = payload[22:24]
             if extra == '01':
                 button = "on"
             elif extra == '00':
                 button = "off"    
-            batt = getBatt(payload)
-            temp = getTemp(payload)
+            batt = ingicsBatt(payload)
+            temp = ingicsTemp(payload)
             model = "iBS03T"
             manu = "INGICS"
             accepted_sensor = 1
-
-
+            
+        #type is ruuvitag    
         elif senstype == "02010611FF9904":
             temp= ruuviTemp(payload)
             humid = ruuviHum(payload)
@@ -134,7 +115,8 @@ def on_message(client, userdata, message):
             model = "ruuvitag"
             manu = "RUUVI"
             accepted_sensor = 1
-
+        
+        #type is xiaomi
         elif senstype == "10161A18A4C138":
             temp = xiaomiTemp(payload)
             humid = xiaomiHum(payload)
@@ -143,13 +125,10 @@ def on_message(client, userdata, message):
             manu = "XIAOMI"
             accepted_sensor = 1
 
-
-
         if accepted_sensor == 1:    
             batt_cfg = battery_cfg.replace('MACADDRESS', str(mac))
             batt_cfg = batt_cfg.replace('MODELNAME', str(model))
             batt_cfg = batt_cfg.replace('MANUFACTURENAME', str(manu))
-           
             temp_cfg = temperature_cfg.replace('MACADDRESS', str(mac))
             temp_cfg = temp_cfg.replace('MODELNAME', str(model))
             temp_cfg = temp_cfg.replace('MANUFACTURENAME', str(manu))
@@ -164,10 +143,6 @@ def on_message(client, userdata, message):
                 hum_cfg = humidity_cfg.replace('MACADDRESS', str(mac))
                 hum_cfg = hum_cfg.replace('MODELNAME', str(model))
                 hum_cfg = hum_cfg.replace('MANUFACTURENAME', str(manu))
-
-        
-        
-        
                 tpmsg = topicmsgwhumid.replace('HUMID', str(humid))
                 tpmsg = tpmsg.replace('BATT', str(batt))
             else:
@@ -181,6 +156,7 @@ def on_message(client, userdata, message):
                 client.publish("homeassistant/sensor/" + mac + "/linkquality/config", link_cfg, retain=True)
                 if humid > 1:
                     client.publish("homeassistant/sensor/" + mac + "/humidity/config", hum_cfg, retain=True)
+
             client.publish("ble2mqtt/" + mac, tpmsg)
             client.publish("ble2mqtt/state", "online")
                 
@@ -188,17 +164,14 @@ def on_message(client, userdata, message):
         print("on message exception: ")
         print(e)
 
-
 def on_disconnect(client, userdata, rc):
     print("disconnecting reason  "  +str(rc))
     
-
 def on_connect(client, userdata, flags, rc):
     if rc==0:
         print("connected OK")
     else:
         print("Bad connection Returned code=",rc)
-
 
 def connectmqtt():
     client = mqtt.Client("ble2mqttscript-test")	
@@ -212,7 +185,6 @@ def connectmqtt():
     client.publish("ble2mqtt/state", "online")
     client.on_message=on_message
     client.loop_forever()
-
 
 while True:
     try:
