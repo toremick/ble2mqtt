@@ -25,9 +25,13 @@ def ingicsTemp(msg):
 
 def ruuviTemp(msg):
     val_one = int(msg[18:20], 16)
-    dec = int(msg[20:22], 16)
-    temp = round(val_one + (dec/100),2)
-    return temp
+    val_two = int(msg[20:22], 16)
+    temp = (val_one & 127) + val_two / 100
+    sign = (val_one >> 7) & 1
+    if sign == 0:
+        return round(temp, 2)
+    return round(-1 * temp, 2)
+
 
 def xiaomiTemp(msg):
     val_one = int(msg[20:24], 16)
